@@ -18,10 +18,10 @@ class Node(object):
     @property
     def childNo(self):
         childno = 0
-        if self.left == None:
+        if self.left != None:
             childno += 1
 
-        if self.right == None:
+        if self.right != None:
             childno += 1
         return childno
 
@@ -39,7 +39,7 @@ class Node(object):
             self.left = Node(data, previous=self)
             return self.left
 
-    def deleteNodeWithData(self, data):
+    def deleteSubNodeWithData(self, data):
         if self.left != None:
             if self.left.data == data:
                 self.left = None
@@ -60,14 +60,32 @@ class BinaryTree(object):
         return str(self.root)
         
         
-    def inorderPredecessor(self, node):
+    def subtreePredecessor(self, node):
         #rightmost node of the left subtree
-        if node.left == None:
-            
+        def subtreepred(node):
+            if node.right == None:
+                return node
+            else:
+                return subtreepred(node.right)
 
-    def inorderSuccessor(self, node):
+        if node.left != None:
+            return subtreepred(node.left)
+        else:
+            return None
+
+
+    def subtreeSuccessor(self, node):
         #leftmost node of the right subtree
-        pass
+        def subtreeSuc(node):
+            if node.left == None:
+                return node
+            else:
+                return subtreeSuc(node.left)
+
+        if node.right == None:
+            return None
+        else:
+            return subtreeSuc(node.right)
     
 
     def search(self,data) -> Node:
@@ -112,14 +130,26 @@ class BinaryTree(object):
 
 
     def delete(self,data) -> None:
+
+        
+        #find node, if it doesnt exist then return 
         rNode = self.search(data)
         if rNode == None:
             return False
 
+        print('child node', rNode.childNo)
+
+        # if node is a leaf then delete the node
         if rNode.is_leaf:
-            rNode.prev.deleteNodeWithData(data)
+            rNode.prev.deleteSubNodeWithData(data)
             return True
 
+
+        #if the node has only one child 
+        # pNode - previous node
+        # rNode = node to delete
+        # cNode = child node 
+        # replace the pNode left or right with cNode
         if rNode.childNo == 1:
             if rNode.left == None:
                 cNode = rNode.right
@@ -132,10 +162,29 @@ class BinaryTree(object):
             if cNode.data > pNode.data:
                 pNode.right = cNode
             else:
-                pNode.left = cNode
+                pNode.left = cNode 
+            return True
 
+        # if node has two child no
+        
+        
         if rNode.childNo == 2:
-            pass
+
+            cNode = self.subtreeSuccessor(rNode)
+            if cNode == None:
+                cNode = self.subtreePredecessor(rNode)
+            if cNode == None:
+                return False
+
+            rNode.data = cNode.data
+            #self.delete(cNode.data)
+            # this will terminate because cNode is either a leef or has 
+            # 1 child node.
+
+            return True
+
+        return False
+
 
             
         
