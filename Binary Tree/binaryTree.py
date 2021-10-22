@@ -137,7 +137,6 @@ class BinaryTree(object):
         if rNode == None:
             return False
 
-        print('child node', rNode.childNo)
 
         # if node is a leaf then delete the node
         if rNode.is_leaf:
@@ -176,8 +175,13 @@ class BinaryTree(object):
             if cNode == None:
                 return False
 
-            rNode.data = cNode.data
-            #self.delete(cNode.data)
+            print('cNode.data', cNode.data)
+            temp_data = cNode.data
+            self.delete(cNode.data)
+            rNode.data = temp_data  
+
+            
+
             # this will terminate because cNode is either a leef or has 
             # 1 child node.
 
